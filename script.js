@@ -47,7 +47,8 @@ li.onclick = function () {
     // Create delete button
     let btn = document.createElement("button");
     btn.textContent = "Remove Task";
-
+btn.style.backgroundColor = "orange";
+btn.style.color = "white";
     // When button clicked → remove task
     btn.onclick = function (event) {
     event.stopPropagation();
