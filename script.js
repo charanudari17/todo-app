@@ -26,7 +26,7 @@ li.onclick = function () {
     input.value = "";
 }
 
-// 👉 THIS SHOULD BE OUTSIDE
+
 function deleteAll() {
     let list = document.getElementById("taskList");
 
