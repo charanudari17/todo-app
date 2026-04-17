@@ -1,3 +1,34 @@
+window.onload = function () {
+    let saved = localStorage.getItem("tasks");
+    if (saved) {
+        document.getElementById("taskList").innerHTML = saved;
+
+        // reattach delete button events
+        let buttons = document.querySelectorAll("#taskList button");
+
+        buttons.forEach(function (btn) {
+            btn.onclick = function (event) {
+                event.stopPropagation();
+                btn.parentElement.remove();
+                saveTasks();
+            };
+        });
+
+        // reattach li click (complete toggle)
+        let items = document.querySelectorAll("#taskList li");
+
+        items.forEach(function (li) {
+            li.onclick = function () {
+                if (li.style.textDecoration === "line-through") {
+                    li.style.textDecoration = "none";
+                } else {
+                    li.style.textDecoration = "line-through";
+                }
+                saveTasks();
+            };
+        });
+    }
+};
 function addTask() {
     let input = document.getElementById("taskInput");
     let task = input.value;
@@ -7,7 +38,11 @@ function addTask() {
     let li = document.createElement("li");
     li.textContent = task;
 li.onclick = function () {
-    li.style.textDecoration = "line-through";
+    if (li.style.textDecoration === "line-through") {
+        li.style.textDecoration = "none";
+    } else {
+        li.style.textDecoration = "line-through";
+    }
 };
     // Create delete button
     let btn = document.createElement("button");
@@ -15,8 +50,9 @@ li.onclick = function () {
 
     // When button clicked → remove task
     btn.onclick = function (event) {
-    event.stopPropagation(); // prevents li click
+    event.stopPropagation();
     li.remove();
+    saveTasks();  
 };
 
     li.appendChild(btn);
@@ -24,6 +60,7 @@ li.onclick = function () {
     document.getElementById("taskList").appendChild(li);
 
     input.value = "";
+    saveTasks();
 }
 
 
@@ -36,4 +73,9 @@ function deleteAll() {
     }
 
     list.innerHTML = "";
+    saveTasks();
+}
+function saveTasks() {
+    let tasks = document.getElementById("taskList").innerHTML;
+    localStorage.setItem("tasks", tasks);
 }
