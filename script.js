@@ -3,7 +3,6 @@ window.onload = function () {
     if (saved) {
         document.getElementById("taskList").innerHTML = saved;
 
-        // reattach delete button events
         let buttons = document.querySelectorAll("#taskList button");
 
         buttons.forEach(function (btn) {
