@@ -1,35 +1,320 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>To-Do App</title>
+    <title>Advanced Todo App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>📝 My To-Do List</h1>
-            <p class="subtitle">Stay organized and productive</p>
-        </div>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <h1><i class="fas fa-tasks"></i> Advanced Todo App</h1>
+                <div class="header-controls">
+                    <button class="theme-toggle" id="themeToggle" title="Toggle Theme">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <button class="undo-btn" id="undoBtn" title="Undo">
+                        <i class="fas fa-undo"></i>
+                    </button>
+                    <button class="redo-btn" id="redoBtn" title="Redo">
+                        <i class="fas fa-redo"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
 
-        <div class="input-section">
-            <input type="text" id="taskInput" placeholder="Add a new task..." maxlength="100">
-            <button class="add-btn" onclick="addTask()">+ Add</button>
-            <button class="delete-all-btn" onclick="deleteAll()">🗑️ Clear All</button>
-        </div>
+        <div class="main-content">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-section">
+                    <h3>Categories</h3>
+                    <div class="categories-list">
+                        <button class="category-btn active" data-category="all">
+                            <i class="fas fa-inbox"></i> All Tasks
+                        </button>
+                        <button class="category-btn" data-category="work">
+                            <i class="fas fa-briefcase"></i> Work
+                        </button>
+                        <button class="category-btn" data-category="personal">
+                            <i class="fas fa-user"></i> Personal
+                        </button>
+                        <button class="category-btn" data-category="shopping">
+                            <i class="fas fa-shopping-bag"></i> Shopping
+                        </button>
+                        <button class="category-btn" data-category="health">
+                            <i class="fas fa-heart"></i> Health
+                        </button>
+                        <button class="category-btn" data-category="education">
+                            <i class="fas fa-graduation-cap"></i> Education
+                        </button>
+                        <button class="add-category-btn" id="addCategoryBtn">
+                            <i class="fas fa-plus"></i> Add Category
+                        </button>
+                    </div>
+                </div>
 
-        <ul id="taskList" class="task-list"></ul>
+                <div class="sidebar-section">
+                    <h3>Filters</h3>
+                    <div class="filter-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" class="priority-filter" data-priority="high">
+                            <span><i class="fas fa-flag" style="color: #ff4757;"></i> High Priority</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" class="priority-filter" data-priority="medium">
+                            <span><i class="fas fa-flag" style="color: #ffa502;"></i> Medium Priority</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" class="priority-filter" data-priority="low">
+                            <span><i class="fas fa-flag" style="color: #2ed573;"></i> Low Priority</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="overdueFilter">
+                            <span><i class="fas fa-exclamation-circle"></i> Overdue</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="completedFilter">
+                            <span><i class="fas fa-check-circle"></i> Completed</span>
+                        </label>
+                    </div>
+                </div>
 
-        <div class="empty-state" id="emptyState">
-            <p>No tasks yet. Add one to get started! 🚀</p>
+                <div class="sidebar-section">
+                    <h3>Stats</h3>
+                    <div class="stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Total Tasks:</span>
+                            <span class="stat-value" id="totalTasks">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Completed:</span>
+                            <span class="stat-value" id="completedTasks">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Pending:</span>
+                            <span class="stat-value" id="pendingTasks">0</span>
+                        </div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="progressBar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <p class="progress-text" id="progressText">0% Complete</p>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content Area -->
+            <div class="content-area">
+                <!-- Add Task Section -->
+                <div class="add-task-section">
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search tasks...">
+                        <button class="clear-search-btn" id="clearSearchBtn" style="display: none;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+
+                    <button class="add-task-btn" id="addTaskBtn">
+                        <i class="fas fa-plus"></i> Add New Task
+                    </button>
+
+                    <div class="sort-controls">
+                        <label for="sortSelect">Sort by:</label>
+                        <select id="sortSelect">
+                            <option value="date-asc">Due Date (Earliest)</option>
+                            <option value="date-desc">Due Date (Latest)</option>
+                            <option value="priority">Priority</option>
+                            <option value="created">Recently Created</option>
+                            <option value="alphabetical">Alphabetical</option>
+                        </select>
+
+                        <button class="bulk-actions-btn" id="bulkActionsToggle">
+                            <i class="fas fa-check-double"></i> Bulk Actions
+                        </button>
+                    </div>
+
+                    <!-- Bulk Actions -->
+                    <div class="bulk-actions" id="bulkActions" style="display: none;">
+                        <button id="selectAllBtn" class="bulk-action-item">
+                            <i class="fas fa-check-square"></i> Select All
+                        </button>
+                        <button id="completeSelectedBtn" class="bulk-action-item">
+                            <i class="fas fa-check-circle"></i> Mark Complete
+                        </button>
+                        <button id="deleteSelectedBtn" class="bulk-action-item delete">
+                            <i class="fas fa-trash"></i> Delete Selected
+                        </button>
+                        <button id="clearAllBtn" class="bulk-action-item delete">
+                            <i class="fas fa-broom"></i> Clear All
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tasks List -->
+                <div class="tasks-container">
+                    <div id="emptyState" class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>No tasks yet. Add one to get started! 🚀</p>
+                    </div>
+                    <ul id="taskList" class="task-list"></ul>
+                </div>
+            </div>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <!-- Add/Edit Task Modal -->
+    <div class="modal" id="taskModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Add New Task</h2>
+                <button class="modal-close" id="modalCloseBtn">&times;</button>
+            </div>
+            <form id="taskForm">
+                <div class="form-group">
+                    <label for="taskTitle">Task Title *</label>
+                    <input type="text" id="taskTitle" required placeholder="Enter task title">
+                </div>
+
+                <div class="form-group">
+                    <label for="taskDescription">Description</label>
+                    <textarea id="taskDescription" placeholder="Add task description..."></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="taskCategory">Category</label>
+                        <select id="taskCategory">
+                            <option value="work">Work</option>
+                            <option value="personal" selected>Personal</option>
+                            <option value="shopping">Shopping</option>
+                            <option value="health">Health</option>
+                            <option value="education">Education</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="taskPriority">Priority</label>
+                        <select id="taskPriority">
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="taskDueDate">Due Date</label>
+                        <input type="date" id="taskDueDate">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="taskDueTime">Due Time</label>
+                        <input type="time" id="taskDueTime">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Subtasks</label>
+                    <div id="subtasksList" class="subtasks-list"></div>
+                    <button type="button" class="add-subtask-btn" id="addSubtaskBtn">
+                        <i class="fas fa-plus"></i> Add Subtask
+                    </button>
+                </div>
+
+                <label class="checkbox-label">
+                    <input type="checkbox" id="taskReminder">
+                    <span>Enable Reminder</span>
+                </label>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary" id="saveTaskBtn">Save Task</button>
+                    <button type="button" class="btn-secondary" id="cancelTaskBtn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Category Modal -->
+    <div class="modal" id="categoryModal">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h2>Add New Category</h2>
+                <button class="modal-close" id="categoryModalCloseBtn">&times;</button>
+            </div>
+            <form id="categoryForm">
+                <div class="form-group">
+                    <label for="categoryName">Category Name</label>
+                    <input type="text" id="categoryName" required placeholder="Enter category name">
+                </div>
+                <div class="form-group">
+                    <label for="categoryIcon">Icon/Emoji</label>
+                    <input type="text" id="categoryIcon" placeholder="e.g., 📚 or fas fa-book">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Add Category</button>
+                    <button type="button" class="btn-secondary" id="cancelCategoryBtn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Task Details Modal -->
+    <div class="modal" id="detailsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="detailsTitle">Task Details</h2>
+                <button class="modal-close" id="detailsCloseBtn">&times;</button>
+            </div>
+            <div id="detailsContent" class="details-content"></div>
+            <div class="form-actions">
+                <button class="btn-primary" id="editTaskDetailsBtn">Edit</button>
+                <button class="btn-secondary" id="closeDetailsBtn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Admin & Creator</h4>
+                <p>Made by <strong>charan</strong></p>
+                <p class="footer-date">© 2026 Advanced Todo App</p>
+            </div>
+            <div class="footer-section">
+                <h4>Contact & Links</h4>
+                <ul class="footer-links">
+                    <li><a href="https://github.com/charanudari17" target="_blank" rel="noopener">
+                            <i class="fas fa-github"></i> GitHub
+                        </a></li>
+                    <li><a href="mailto:charanudari17@gmail.com">
+                            <i class="fas fa-envelope"></i> Email
+                        </a></li>
+                    <li><a href="https://twitter.com" target="_blank" rel="noopener">
+                            <i class="fas fa-twitter"></i> Twitter
+                        </a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>About App</h4>
+                <p>A powerful, feature-rich todo application with categories, priorities, and more.</p>
+                <p class="footer-version">v1.0.0</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="storage.js"></script>
+    <script src="history.js"></script>
+    <script src="app.js"></script>
 </body>
 
 </html>
