@@ -344,6 +344,8 @@ class TodoApp {
         document.querySelectorAll('.category-btn').forEach(btn => {
             btn.classList.toggle('active', btn.dataset.category === category);
         });
+        // Reload tasks from storage to ensure we have latest data
+        this.loadTasks();
         this.applyFilters();
     }
 
@@ -368,7 +370,21 @@ class TodoApp {
     }
 
     applyFilters() {
-        let filtered = [...this.filteredTasks];
+        // Start with all tasks or search results
+        const searchInput = document.getElementById('searchInput');
+        const query = searchInput ? searchInput.value.trim() : '';
+        
+        let filtered;
+        if (query) {
+            // If searching, filter from search results
+            filtered = this.tasks.filter(task =>
+                task.title.toLowerCase().includes(query.toLowerCase()) ||
+                (task.description && task.description.toLowerCase().includes(query.toLowerCase()))
+            );
+        } else {
+            // No search, start with all tasks
+            filtered = [...this.tasks];
+        }
 
         // Category filter
         if (this.currentCategory !== 'all') {
